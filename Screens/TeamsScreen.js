@@ -17,6 +17,7 @@ function TeamsScreen({ navigation }) {
           onPress={() => value === "" ? null :
             navigation.push('PlayerSelect', {
             numOfTeams: value,
+            currTeam: 1,
           })}
         />
       ),

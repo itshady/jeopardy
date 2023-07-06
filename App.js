@@ -6,11 +6,13 @@ import Menu from './Menu';
 
 
 function App() {
+  
+
   return (
     <NativeBaseProvider>
-    <NavigationContainer>
-      <Menu />
-    </NavigationContainer>
+      <NavigationContainer>
+        <Menu />
+      </NavigationContainer>
     </NativeBaseProvider>
   );
 }

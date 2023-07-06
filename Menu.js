@@ -2,9 +2,11 @@ import 'react-native-gesture-handler';
 import * as React from 'react';
 import { Button, View, Text } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import StartScreen from './StartScreen'
-import TeamsScreen from './TeamsScreen';
-import PlayerSelectScreen from './PlayerSelectScreen';
+import StartScreen from './Screens/StartScreen';
+import TeamsScreen from './Screens/TeamsScreen';
+import PlayerSelectScreen from './Screens/PlayerSelectScreen';
+import FinalizeTeamsScreen from './Screens/FinalizeTeamsScreen';
+import GameScreen from './Screens/GameScreen'
 
 const Stack = createNativeStackNavigator();
 
@@ -44,17 +46,33 @@ function Menu() {
         component={PlayerSelectScreen} 
         options={({ navigation, route }) => ({
           // headerTitle: (props) => <Text>How many people per team</Text>,
-          title: 'How many people per team',
+          title: 'Team 1',
           // Add a placeholder button without the `onPress` to avoid flicker
           headerRight: () => (
-            <Button title="Next" 
-              onPress={() => 
-                navigation.push('Start', {
-                itemId: 86,
-                otherParam: 'anything you want here',
-              })}
+            <Button title="Next Team" />
+          ),
+        })}
+      />
+      <Stack.Screen 
+        name="FinalTeams" 
+        component={FinalizeTeamsScreen} 
+        options={({ navigation, route }) => ({
+          // headerTitle: (props) => <Text>How many people per team</Text>,
+          title: 'Final Teams',
+          // Add a placeholder button without the `onPress` to avoid flicker
+          headerRight: () => (
+            <Button title="Start Game" 
+              onPress={() => navigation.push('RunningGame')}
             />
           ),
+        })}
+      />
+      <Stack.Screen 
+        name="RunningGame" 
+        component={GameScreen} 
+        options={({ navigation, route }) => ({
+          // headerTitle: (props) => <Text>How many people per team</Text>,
+          title: 'Game on!',
         })}
       />
     </Stack.Navigator>
