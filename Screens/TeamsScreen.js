@@ -3,7 +3,8 @@ import * as React from 'react';
 import { Button, View } from 'react-native';
 import { FormControl, WarningOutlineIcon, Center, Select, CheckIcon } from "native-base";
 
-function TeamsScreen({ navigation }) {
+function TeamsScreen({ route, navigation }) {
+  const { players, updatePlayerTeam } = route.params;
   const [value, setValue] = React.useState("");
 
   const handleChange = text => setValue(text);
@@ -18,6 +19,8 @@ function TeamsScreen({ navigation }) {
             navigation.push('PlayerSelect', {
             numOfTeams: value,
             currTeam: 1,
+            players: players,
+            updatePlayerTeam: updatePlayerTeam,
           })}
         />
       ),

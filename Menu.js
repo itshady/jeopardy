@@ -7,10 +7,21 @@ import TeamsScreen from './Screens/TeamsScreen';
 import PlayerSelectScreen from './Screens/PlayerSelectScreen';
 import FinalizeTeamsScreen from './Screens/FinalizeTeamsScreen';
 import GameScreen from './Screens/GameScreen'
+import { PLAYERS } from './players'
 
 const Stack = createNativeStackNavigator();
 
 function Menu() {
+  const [players, setPlayers] = React.useState(PLAYERS);
+
+  const updatePlayerTeam = (id, newTeam) => {
+    setPlayers(prevPlayers => 
+      prevPlayers.map(player => 
+        player.id === id ? { ...player, team: newTeam } : player
+      )
+    );
+  };
+
   return (
     <Stack.Navigator initialRouteName="Start">
       <Stack.Screen name="Start" component={StartScreen} 
@@ -24,6 +35,8 @@ function Menu() {
                 navigation.push('Teams', {
                 itemId: 86,
                 otherParam: 'anything you want here',
+                players: players,
+                updatePlayerTeam: updatePlayerTeam,
               })}
             />
           ),

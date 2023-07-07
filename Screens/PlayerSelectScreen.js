@@ -3,9 +3,8 @@ import * as React from 'react';
 import { Button, View, Text, SafeAreaView, ScrollView } from 'react-native';
 import { Icon, VStack, HStack, Divider, IconButton } from 'native-base';
 import { Ionicons, FontAwesome, Entypo } from "@expo/vector-icons";
-import { PLAYERS } from '../players'
 
-const addButton = () => {
+const addButton = (id, team, players, updatePlayerTeam) => {
   return (
     <IconButton icon={<Icon as={Entypo} name="circle-with-plus" />} borderRadius="full" _icon={{
       color: "green.500",
@@ -24,11 +23,17 @@ const addButton = () => {
       _icon: {
         size: "lg"
       }
-    }} />
+    }} 
+    onPress={() => {
+      updatePlayerTeam(id, team)
+      console.log(players[id])
+      console.log("here")
+    }}
+    />
   );
 }
 
-const removeButton = () => {
+const removeButton = (id, team, players, updatePlayerTeam) => {
   return (
     <IconButton icon={<Icon as={Entypo} name="circle-with-minus" />} borderRadius="full" _icon={{
       color: "red.500",
@@ -47,12 +52,17 @@ const removeButton = () => {
       _icon: {
         size: "lg"
       }
-    }} />
+    }} 
+    onPress={() => {
+      if (players[id].team == team) updatePlayerTeam(id, null)
+    }}
+    />
   );
 }
 
 function PlayerSelectScreen({ route, navigation }) {
-  const { numOfTeams, currTeam } = route.params;
+  // players, updatePlayerTeam
+  const { numOfTeams, currTeam, players, updatePlayerTeam } = route.params;
   const [numPlayers, setNumPlayers] = React.useState(0);
   
   React.useEffect(() => {
@@ -64,9 +74,9 @@ function PlayerSelectScreen({ route, navigation }) {
         <Button title="Confirm"
           onPress={() =>
             navigation.push('FinalTeams', {
-            numOfTeams: numOfTeams,
-            currTeam: currTeam + 1,
-          })}
+              numOfTeams: numOfTeams,
+              currTeam: currTeam + 1,
+            })}
         />
         :
         <Button title="Next Team"
@@ -74,6 +84,8 @@ function PlayerSelectScreen({ route, navigation }) {
             navigation.push('PlayerSelect', {
             numOfTeams: numOfTeams,
             currTeam: currTeam + 1,
+            players: players,
+            updatePlayerTeam: updatePlayerTeam,
           })}
         />
       ),
@@ -91,16 +103,19 @@ function PlayerSelectScreen({ route, navigation }) {
           Add Player
         </Button> */}
         <VStack space={0} divider={<Divider />} w="90%">
-          {PLAYERS.map((player) => (
-            <HStack justifyContent="space-between" key={player.id} backgroundColor="green.100">
+          {players.map((player) => (
+            <HStack justifyContent="space-between" key={player.id} backgroundColor={player.team == currTeam ? "green.100" : null}>
               <Text size="lg" alignSelf="center" style={{fontWeight: "bold"}}>{player.name}</Text>
               <HStack style={{ gap: '10px' }}>
-                {addButton()}
-                {removeButton()}
+                {addButton(player.id, currTeam, players, updatePlayerTeam)}
+                {removeButton(player.id, currTeam, players, updatePlayerTeam)}
               </HStack>
             </HStack>
           ))}
         </VStack>
+          {players.map((player) => (
+            <Text key={player.id}>{player.name} - {player.team}</Text>
+          ))}
       </View>
     </ScrollView>
   );
