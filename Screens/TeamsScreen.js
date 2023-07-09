@@ -2,16 +2,16 @@ import 'react-native-gesture-handler';
 import * as React from 'react';
 import { Button, View } from 'react-native';
 import { FormControl, WarningOutlineIcon, Center, Select, CheckIcon } from "native-base";
+import { getPlayers } from '../queries';
 
 function TeamsScreen({ route, navigation }) {
-  const { players, updatePlayerTeam } = route.params;
   const [value, setValue] = React.useState("");
 
   const handleChange = text => setValue(text);
 
+  const [players, setPlayers] = React.useState([])
+
   React.useEffect(() => {
-    // Use `setOptions` to update the button that we previously specified
-    // Now the button includes an `onPress` handler to update the count
     navigation.setOptions({
       headerRight: () => (
         <Button title="Next" 
@@ -19,12 +19,12 @@ function TeamsScreen({ route, navigation }) {
             navigation.push('PlayerSelect', {
             numOfTeams: value,
             currTeam: 1,
-            players: players,
-            updatePlayerTeam: updatePlayerTeam,
           })}
         />
       ),
     });
+    
+    getPlayers(setPlayers)
   }, [navigation, value]);
 
   return (

@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import * as React from 'react';
-import { Button, View, Text, TextInput } from 'react-native';
+import { Button } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import StartScreen from './Screens/StartScreen';
 import TeamsScreen from './Screens/TeamsScreen';
@@ -8,7 +8,7 @@ import PlayerSelectScreen from './Screens/PlayerSelectScreen';
 import FinalizeTeamsScreen from './Screens/FinalizeTeamsScreen';
 import GameScreen from './Screens/GameScreen'
 import * as SQLite from 'expo-sqlite'
-import { HStack, Input } from 'native-base';
+import { dropTable, getPlayers } from './queries';
 
 const Stack = createNativeStackNavigator();
 
@@ -19,22 +19,22 @@ function Menu() {
 
   React.useEffect(() => {
     db.transaction(tx => {
-      tx.executeSql('CREATE TABLE IF NOT EXISTS players (id INTEGER PRIMARY KEY AUTOINCREMENT, fname TEXT, lname TEXT, gamertag TEXT, wins INTEGER, loses INTEGER, draws INTEGER)')
+      tx.executeSql(`CREATE TABLE IF NOT EXISTS players 
+          (id INTEGER PRIMARY KEY AUTOINCREMENT, 
+          fname TEXT, 
+          lname TEXT,
+          gamertag TEXT, 
+          wins INTEGER DEFAULT 0, 
+          loses INTEGER DEFAULT 0, 
+          draws INTEGER DEFAULT 0, 
+          team INTEGER)`
+        )
     })
 
-    db.transaction(tx => {
-      tx.executeSql('SELECT * from players', null, 
-        (txObj, resultSet) => setPlayers(resultSet.rows._array),
-        (txObj, error) => console.log(error)
-      )
-    })
+    getPlayers(setPlayers)
 
     setIsLoading(false)
   }, [])
-
-  const updatePlayerTeam = () => {
-
-  }
 
   return (
     <Stack.Navigator initialRouteName="Start">
@@ -45,11 +45,7 @@ function Menu() {
           // Add a placeholder button without the `onPress` to avoid flicker
           headerRight: () => (
             <Button title="Start" 
-              onPress={() => 
-                navigation.push('Teams', {
-                players: players,
-                updatePlayerTeam: updatePlayerTeam,
-              })}
+              onPress={() => navigation.push('Teams')}
             />
           ),
         })}

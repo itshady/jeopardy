@@ -4,6 +4,7 @@ import { Button, View, Text, SafeAreaView, ScrollView, TextInput } from 'react-n
 import { Icon, VStack, HStack, Divider, IconButton } from 'native-base';
 import { Entypo } from "@expo/vector-icons";
 import * as SQLite from 'expo-sqlite'
+import { getPlayers, deletePlayer } from '../queries';
 
 function StartScreen({ }) { 
   const db = SQLite.openDatabase('example.db')
@@ -12,12 +13,7 @@ function StartScreen({ }) {
   const [currLname, setCurrLname] = React.useState(undefined)
 
   React.useEffect(() => {
-    db.transaction(tx => {
-      tx.executeSql('SELECT * from players', null, 
-        (txObj, resultSet) => setPlayers(resultSet.rows._array),
-        (txObj, error) => console.log(error)
-      )
-    })
+    getPlayers(setPlayers)
   }, [])
 
   const removeButton = (id) => {
@@ -41,7 +37,7 @@ function StartScreen({ }) {
         }
       }} 
       onPress={() => {
-        deletePlayer(id)
+        deletePlayer(id, players, setPlayers)
       }}
       />
     );
@@ -56,20 +52,6 @@ function StartScreen({ }) {
           setPlayers(existingPlayers)
           setCurrFname(undefined)
           setCurrLname(undefined)
-        },
-        (txObj, error) => console.log(error)
-      )
-    })
-  }
-
-  const deletePlayer = (id) => {
-    db.transaction(tx => {
-      tx.executeSql('DELETE FROM players WHERE id = ?', [id], 
-        (txObj, resultSet) => {
-          if (resultSet.rowsAffected > 0) {
-            let existingPlayers = [...players].filter(player => player.id !== id)
-            setPlayers(existingPlayers)
-          }
         },
         (txObj, error) => console.log(error)
       )
@@ -93,7 +75,7 @@ function StartScreen({ }) {
 
   return (
     <ScrollView>
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'column', marginTop: 50 }}>
         <Text>Start Screen</Text>
         <HStack>
           <TextInput style={{ margin: 10, fontSize: 20 }} value={currFname} placeholder="First Name" onChangeText={setCurrFname} />
