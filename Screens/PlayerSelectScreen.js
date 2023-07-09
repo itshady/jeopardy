@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Button, View, Text, SafeAreaView, ScrollView } from 'react-native';
 import { Icon, VStack, HStack, Divider, IconButton } from 'native-base';
 import { Ionicons, FontAwesome, Entypo } from "@expo/vector-icons";
-
+       
 const addButton = (id, team, players, updatePlayerTeam) => {
   return (
     <IconButton icon={<Icon as={Entypo} name="circle-with-plus" />} borderRadius="full" _icon={{
@@ -95,13 +95,6 @@ function PlayerSelectScreen({ route, navigation }) {
   return (
     <ScrollView>
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: '10px', marginVertical: 20 }}>
-        {/* <Button leftIcon={<Ionicons name="md-person-add" size={24} color="white" />}
-          onPress={() => setNumPlayers(c => c + 1)}
-          size="lg" 
-          alignSelf="center" 
-          variant="solid" primary>
-          Add Player
-        </Button> */}
         <VStack space={0} divider={<Divider />} w="90%">
           {players.map((player) => (
             <HStack justifyContent="space-between" key={player.id} backgroundColor={player.team == currTeam ? "green.100" : null}>

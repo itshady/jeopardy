@@ -4,10 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { NativeBaseProvider } from 'native-base';
 import Menu from './Menu';
 
-
 function App() {
-  
-
   return (
     <NativeBaseProvider>
       <NavigationContainer>

@@ -1,30 +1,44 @@
 import 'react-native-gesture-handler';
 import * as React from 'react';
-import { Button, View, Text } from 'react-native';
+import { Button, View, Text, TextInput } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import StartScreen from './Screens/StartScreen';
 import TeamsScreen from './Screens/TeamsScreen';
 import PlayerSelectScreen from './Screens/PlayerSelectScreen';
 import FinalizeTeamsScreen from './Screens/FinalizeTeamsScreen';
 import GameScreen from './Screens/GameScreen'
-import { PLAYERS } from './players'
+import * as SQLite from 'expo-sqlite'
+import { HStack, Input } from 'native-base';
 
 const Stack = createNativeStackNavigator();
 
 function Menu() {
-  const [players, setPlayers] = React.useState(PLAYERS);
+  const db = SQLite.openDatabase('example.db')
+  const [isLoading, setIsLoading] = React.useState(true)
+  const [players, setPlayers] = React.useState([])
 
-  const updatePlayerTeam = (id, newTeam) => {
-    setPlayers(prevPlayers => 
-      prevPlayers.map(player => 
-        player.id === id ? { ...player, team: newTeam } : player
+  React.useEffect(() => {
+    db.transaction(tx => {
+      tx.executeSql('CREATE TABLE IF NOT EXISTS players (id INTEGER PRIMARY KEY AUTOINCREMENT, fname TEXT, lname TEXT, gamertag TEXT, wins INTEGER, loses INTEGER, draws INTEGER)')
+    })
+
+    db.transaction(tx => {
+      tx.executeSql('SELECT * from players', null, 
+        (txObj, resultSet) => setPlayers(resultSet.rows._array),
+        (txObj, error) => console.log(error)
       )
-    );
-  };
+    })
+
+    setIsLoading(false)
+  }, [])
+
+  const updatePlayerTeam = () => {
+
+  }
 
   return (
     <Stack.Navigator initialRouteName="Start">
-      <Stack.Screen name="Start" component={StartScreen} 
+      <Stack.Screen name="Start" component={StartScreen} initialParams={{ players: players, setPlayers: setPlayers }}
         options={({ navigation, route }) => ({
           // headerTitle: (props) => <Text>How many people per team</Text>,
           title: 'Welcome to Jeopardy',
@@ -33,8 +47,6 @@ function Menu() {
             <Button title="Start" 
               onPress={() => 
                 navigation.push('Teams', {
-                itemId: 86,
-                otherParam: 'anything you want here',
                 players: players,
                 updatePlayerTeam: updatePlayerTeam,
               })}
