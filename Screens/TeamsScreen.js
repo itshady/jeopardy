@@ -12,6 +12,8 @@ function TeamsScreen({ route, navigation }) {
   const [players, setPlayers] = React.useState([])
 
   React.useEffect(() => {
+    getPlayers(setPlayers)
+
     navigation.setOptions({
       headerRight: () => (
         <Button title="Next" 
@@ -23,8 +25,6 @@ function TeamsScreen({ route, navigation }) {
         />
       ),
     });
-    
-    getPlayers(setPlayers)
   }, [navigation, value]);
 
   return (

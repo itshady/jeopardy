@@ -4,17 +4,23 @@ import { Button, View, Text, SafeAreaView, ScrollView } from 'react-native';
 import { Icon, VStack, HStack, Divider, IconButton } from 'native-base';
 import { Ionicons, FontAwesome, Entypo } from "@expo/vector-icons";
 import { dropTable, getPlayerTeam, getPlayers, updateTeam } from '../queries';
+import { useIsFocused, useFocusEffect } from '@react-navigation/native';
 
 function PlayerSelectScreen({ route, navigation }) {
   const { numOfTeams, currTeam } = route.params;
   const [numPlayers, setNumPlayers] = React.useState(0);
   const [players, setPlayers] = React.useState([])
+  
+  useFocusEffect(
+    React.useCallback(() => {
+      getPlayers(setPlayers)
+      console.log("here")
+    }, [])
+  );
 
   React.useEffect(() => {
-    console.log(players)
-  }, [players]);
-  
-  React.useEffect(() => {
+    getPlayers(setPlayers)
+
     navigation.setOptions({
       title: `Team ${currTeam}`,
       headerRight: () => ( currTeam == numOfTeams ? 
@@ -35,8 +41,7 @@ function PlayerSelectScreen({ route, navigation }) {
         />
       ),
     });
-
-    getPlayers(setPlayers)
+    console.log("here2")
   }, [navigation]);
 
   const addButton = (player) => {
